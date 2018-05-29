@@ -13,6 +13,7 @@ def drop_null_str(string):
             new_list.append(i)
     return ' '.join(new_list)
 
+
 def drop_nan(df, app_name):
     """
     去空

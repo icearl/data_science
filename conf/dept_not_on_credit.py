@@ -1,0 +1,22 @@
+# 不上征信的 app
+com.zhangzhong.borrow.dkjkzj
+com.chinazyjr.creditloan
+com.cashbus.android.swhj
+com.android.qqxd.loan
+com.hebei.dafy.c2c
+co.welab.wolaidai
+com.chinaideal.bkclient.tabmain
+com.example.caocaodaijizhang
+com.zd.myd
+com.fenqi.geinihua
+com.enniu.renpindai
+com.xianhuahua.yiyiyuan_1
+com.caimi.kuaidai
+aiqianjin.jiea
+com.rong.fastloan
+com.yirendai.rnloancom.treefinance.gongfudai
+com.treefinance.gongfudai
+com.xhqb.app
+com.lr.jimuboxmobile
+com.nonobank
+com.xiaocheng.miaobt

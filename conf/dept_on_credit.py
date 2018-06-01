@@ -1,0 +1,24 @@
+# 上征信的 app
+com.syqy.wecash
+com.yongqianbao.credit
+com.shcc.microcredit
+com.financial.quantgroup
+com.jd.jrapp
+com.hcc.app
+cn.hcc.chaodai
+com.zhangzhong.jieqianban
+com.msxf.loan
+com.samoyed.credit
+com.lakala.android
+com.lakala.shoudan
+com.hjsd.cardloan
+com.vcredit.ddcash
+com.crfchina.financial
+com.example.lfqldka
+com.example.mj48
+com.dhf.miaomiaodai
+com.lingyue.YqdAndroid
+com.xiaoying.cardloan
+com.shuhekeji
+com.yanxin.eloanan
+com.qihoo.loan

@@ -1,3 +1,8 @@
+import os
+import sys
+CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
+sys.path.append("%s/../.."%(CURRENT_DIR))
+from lib import *
 def split(df, ritio_of_train):
     """
 

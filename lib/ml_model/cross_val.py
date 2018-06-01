@@ -1,14 +1,17 @@
 from lib import *
-def lr_cross_val(x_train, x_test, y_train, y_test):
+def lr_cross_val(x_train, x_test, y_train, y_test, x_new, y_new):
     # 模型训练
     lr = LogisticRegression(C=1)
     lr.fit(x_train, y_train)
-    pred_proba = lr.predict_proba(x_test)
-    fpr, tpr, thresholds = roc_curve(y_test, pred_proba[:, 1])
+    pred_proba_test = lr.predict_proba(x_test)
+    pred_proba_new = lr.predict_proba(x_new)
+    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, pred_proba_test[:, 1])
+    fpr_new, tpr_new, thresholds_new = roc_curve(y_new, pred_proba_new[:, 1])
     # print('x_test', x_test, type(x_test))
     # print('pred_proba', pred_proba, len(pred_proba))
-    auc_score = auc(fpr, tpr)
-    return auc_score, pred_proba
+    auc_score_test = auc(fpr_test, tpr_test)
+    auc_score_new = auc(fpr_new, tpr_new)
+    return auc_score_new, pred_proba_test, pred_proba_new
 
 
 def sk_xgb_cross_val(x_train, x_test, y_train, y_test, feature_name_list):
@@ -124,6 +127,27 @@ def pred_cross_val(df, label_name, all_feature_df, uiq_str):
     print('len(data_x)', len(data_x))
     print('len(data_y)', len(data_y))
     x_train, x_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.2)
+    # auc_score_lr, pred_ = lr_cross_val(x_train, x_test, y_train, y_test)
+    # auc_score_xgb, pred_ = xgb_cross_val(x_train, x_test, y_train, y_test)
+    auc_score_sk_xgb, pred_ = sk_xgb_cross_val(x_train, x_test, y_train, y_test, x_train.columns)
+    # auc_score_lgb = lgb_cross_train(x_train, x_test, y_train, y_test)
+
+    # print(uiq_str + ' lr auc_score', auc_score_lr)
+    # print(uiq_str + ' xgb auc_score', auc_score_xgb)
+    print(uiq_str + ' sk xgb auc_score', auc_score_sk_xgb)
+    # print(uiq_str + 'lgb auc_score', auc_score_lgb)
+
+def pred(test_df, test_all_feature_df, new_df, new_all_feature_df, label_name,  uiq_str):
+    x_train = test_all_feature_df
+    y_train = test_df[label_name]
+    x_test = new_all_feature_df
+    y_test = new_df[label_name]
+    print('len(x_train)', len(x_train))
+    print('len(y_train)', len(y_train))
+    print('len(x_test)', len(x_test))
+    print('len(y_test)', len(y_test))
+    # print('len(y_train)', len(data_y))
+    # x_train, x_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.2)
     # auc_score_lr, pred_ = lr_cross_val(x_train, x_test, y_train, y_test)
     # auc_score_xgb, pred_ = xgb_cross_val(x_train, x_test, y_train, y_test)
     auc_score_sk_xgb, pred_ = sk_xgb_cross_val(x_train, x_test, y_train, y_test, x_train.columns)

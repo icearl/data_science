@@ -1,6 +1,8 @@
+# import sys
+# print(sys.path)
 from lib import *
 
-def tfidf_origin_score_feature(train_df, test_df, feature_name, label_name):
+def tfidf_origin_score_feature(train_df, test_df, new_df, feature_name, label_name):
     """
     不提取特征，所有的特征
     :param app_cate: app 类别名
@@ -11,6 +13,8 @@ def tfidf_origin_score_feature(train_df, test_df, feature_name, label_name):
     y_train = train_df[label_name]
     x_test = test_df[feature_name]
     y_test = test_df[label_name]
+    x_new = new_df[feature_name]
+    y_new = new_df[label_name]
 
     split_word = ' '
     count_vectorizer = CountVectorizer(min_df=1, lowercase=False, vocabulary=None,
@@ -34,26 +38,39 @@ def tfidf_origin_score_feature(train_df, test_df, feature_name, label_name):
 
     tf_idf_csr_test = tfidf_transformer.transform(counts_csr_test)
     x_test = tf_idf_csr_test
-    # print('x_test')
+    # new 集
+    counts_csr_new = count_vectorizer.transform(x_new)
+    # # print('counts_csr_test', counts_csr_test)
+    # app_list = count_vectorizer.get_feature_names()
+    # csr_df = counts_csr_test.todense()
+    # applist_df = pd.DataFrame(csr_df, columns=app_list)
+    # print('is nan', np.isnan(applist_df).any().any())
+    # applist_df.to_csv('applist_df_11.csv', encoding="utf-8")
+
+    # tf_idf_csr_test = tfidf_transformer.transform(counts_csr_test)
+    x_new = counts_csr_new
 
     feature_name_list = count_vectorizer.get_feature_names()
     # 模型训练
     # auc_score, pred_proba = sk_xgb_cross_train(x_train, x_test, y_train, y_test, feature_name_list)
     # print('f_name')
-    auc_score, pred_proba = lr_cross_val(x_train, x_test, y_train, y_test)
+    auc_score, pred_proba_test, pred_proba_new = lr_cross_val(x_train, x_test, y_train, y_test, x_new, y_new)
     # auc_score, pred_proba_1 = xgb_cross_train(x_train, x_test, y_train, y_test)
 
     print('origin auc_score', auc_score)
-    pred_proba_list = pred_proba[:, 1]
+    pred_proba_list_test = pred_proba_test[:, 1]
+    pred_proba_list_new = pred_proba_new[:, 1]
     # pred_proba_list = pred_proba_1
     # print(pred_list)
-    res_df = pd.DataFrame()
-    res_df['origin_tfidf'] = pred_proba_list
+    test_res_df = pd.DataFrame()
+    new_res_df = pd.DataFrame()
+    test_res_df['origin_tfidf'] = pred_proba_list_test
+    new_res_df['origin_tfidf'] = pred_proba_list_new
     print('origin end')
-    return res_df
+    return test_res_df, new_res_df
 
 
-def tfidf_score_feature_by_single_cate(train_df, test_df, feature_name, label_name, app_cate):
+def tfidf_score_feature_by_single_cate(train_df, test_df, new_df, feature_name, label_name, app_cate):
     """
 
     :param app_cate: app 类别名
@@ -66,6 +83,8 @@ def tfidf_score_feature_by_single_cate(train_df, test_df, feature_name, label_na
     y_train = train_df[label_name]
     x_test = test_df[feature_name]
     y_test = test_df[label_name]
+    x_new = new_df[feature_name]
+    y_new = new_df[label_name]
 
     split_word = ' '
     if app_cate == 'None':
@@ -96,20 +115,32 @@ def tfidf_score_feature_by_single_cate(train_df, test_df, feature_name, label_na
     # tf_idf_csr_test = tfidf_transformer.transform(counts_csr_test)
     x_test = counts_csr_test
 
-    feature_name_list = count_vectorizer.get_feature_names()
+    # new 集
+    counts_csr_new = count_vectorizer.transform(x_new)
+    # # print('counts_csr_test', counts_csr_test)
+    # app_list = count_vectorizer.get_feature_names()
+    # csr_df = counts_csr_test.todense()
+    # applist_df = pd.DataFrame(csr_df, columns=app_list)
+    # print('is nan', np.isnan(applist_df).any().any())
+    # applist_df.to_csv('applist_df_11.csv', encoding="utf-8")
+
+    # tf_idf_csr_test = tfidf_transformer.transform(counts_csr_test)
+    x_new = counts_csr_new
+    # feature_name_list = count_vectorizer.get_feature_names()
     # 模型训练
     # auc_score, pred_proba = sk_xgb_cross_train(x_train, x_test, y_train, y_test, feature_name_list)
-    auc_score, pred_proba = lr_cross_val(x_train, x_test, y_train, y_test)
+    auc_score, pred_proba_test, pred_proba_new = lr_cross_val(x_train, x_test, y_train, y_test, x_new, y_new)
     # auc_score, pred_proba_1 = xgb_cross_train(x_train, x_test, y_train, y_test)
 
     print(app_cate, 'auc_score', auc_score)
-    pred_proba_list = pred_proba[:, 1]
+    pred_proba_list_test = pred_proba_test[:, 1]
+    pred_proba_list_new = pred_proba_new[:, 1]
     # pred_proba_list = pred_proba_1
     # print(pred_list)
-    return pred_proba_list
+    return pred_proba_list_test, pred_proba_list_new
 
 
-def tfidf_score_feature_by_multi_cates(train_df, test_df, feature_name, label_name, app_cate_list):
+def tfidf_score_feature_by_multi_cates(train_df, test_df, new_df, feature_name, label_name, app_cate_list):
     """
 
     :param train_df:
@@ -121,23 +152,27 @@ def tfidf_score_feature_by_multi_cates(train_df, test_df, feature_name, label_na
     """
     print('tfidf_score_feature_by_multi_cates.......start')
     # res_df = pd.DataFrame(test_df['uid'])
-    res_df = pd.DataFrame()
+    res_test_df = pd.DataFrame()
+    res_new_df = pd.DataFrame()
     # print('res_df', res_df, '111', type(res_df))
     for app_cate in app_cate_list:
-        temp_pred_list = tfidf_score_feature_by_single_cate(train_df, test_df, feature_name, label_name, app_cate)
+        pred_proba_list_test, pred_proba_list_new = tfidf_score_feature_by_single_cate(train_df, test_df, new_df, feature_name, label_name, app_cate)
         # print(res_df['uid'])
-        res_df[app_cate + '_tfidf'] = temp_pred_list
+        res_test_df[app_cate + '_tfidf'] = pred_proba_list_test
+        res_new_df[app_cate + '_tfidf'] = pred_proba_list_new
     # print('tfidf_score_df', res_df)
     print('tfidf_score_feature_by_multi_cates.......end')
-    return res_df
+    return res_test_df, res_new_df
 
 
-def single_classic_feature(app_cate, train_df, test_df, feature_name, label_name):
+def single_classic_feature(app_cate, train_df, test_df, new_df, feature_name, label_name):
     app_cate_name_list = single_kind_by_config_file(app_cate)
     train_x = train_df[feature_name]
     train_y = train_df[label_name]
     test_x = test_df[feature_name]
     test_y = test_df[label_name]
+    x_new = new_df[feature_name]
+    y_new = new_df[label_name]
 
     split_word = ' '
     count_vectorizer = CountVectorizer(min_df=1, lowercase=False, vocabulary=None,
@@ -145,28 +180,37 @@ def single_classic_feature(app_cate, train_df, test_df, feature_name, label_name
                                            split_word, split_word, split_word, split_word))
     counts_csr_train = count_vectorizer.fit_transform(train_x)
     counts_csr_test = count_vectorizer.transform(test_x)
+    counts_csr_new = count_vectorizer.transform(x_new)
     app_list = count_vectorizer.get_feature_names()
-    csr_df = counts_csr_test.todense()
-    applist_df = pd.DataFrame(csr_df, columns=app_list)
-    cate_stat_df = stat_cate(applist_df, app_cate_name_list, app_list)
-    return cate_stat_df
+    csr_test_df = counts_csr_test.todense()
+    csr_new_df = counts_csr_new.todense()
+    applist_test_df = pd.DataFrame(csr_test_df, columns=app_list)
+    applist_new_df = pd.DataFrame(csr_new_df, columns=app_list)
+    cate_stat_test_df = stat_cate(applist_test_df, app_cate_name_list, app_list)
+    cate_stat_new_df = stat_cate(applist_new_df, app_cate_name_list, app_list)
+    return cate_stat_test_df, cate_stat_new_df
 
 
-def multi_classic_feature(app_cate_list, train_df, test_df, feature_name, label_name):
+def multi_classic_feature(app_cate_list, train_df, test_df, new_df, feature_name, label_name):
     print('multi_classic_feature.......start')
-    res_df = pd.DataFrame()
+    res_test_df = pd.DataFrame()
+    res_new_df = pd.DataFrame()
     # print('res_df', res_df, '111', type(res_df))
     for app_cate in app_cate_list:
-        temp_classic_feature_df = single_classic_feature(app_cate, train_df, test_df, feature_name, label_name)
+        print(app_cate, ' classic training')
+        cate_stat_test_df, cate_stat_new_df = \
+            single_classic_feature(app_cate, train_df, test_df, new_df, feature_name, label_name)
         # print(res_df['uid'])
         # print('res_df', res_df)
         # print('temp_classic_feature_df', temp_classic_feature_df)
-        res_df[app_cate + '_cate_app_num'] = temp_classic_feature_df['cate_app_num']
-        res_df[app_cate + '_cate/all'] = temp_classic_feature_df['cate/all']
+        res_test_df[app_cate + '_cate_app_num'] = cate_stat_test_df['cate_app_num']
+        res_test_df[app_cate + '_cate/all'] = cate_stat_test_df['cate/all']
+        res_new_df[app_cate + '_cate_app_num'] = cate_stat_new_df['cate_app_num']
+        res_new_df[app_cate + '_cate/all'] = cate_stat_new_df['cate/all']
         # res_df.loc[:, app_cate + '_cate/all'] = temp_classic_feature_df
     # print('multi_classic_feature_df', res_df)
     print('multi_classic_feature.......done')
-    return res_df
+    return res_test_df, res_new_df
 
 
 def all_app_num(row_list):

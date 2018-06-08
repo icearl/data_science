@@ -15,6 +15,7 @@ def applist_test():
     # df = txt_to_df('../data/libing_join_applist_data.txt', header_list)
     df = txt_to_df('../data/libing_join_applist_data_test.txt', header_list)
     df = drop_nan(df, 'installed_apk')
+    df.to_csv('uid_applist_df.csv', encoding="utf-8")
     # 拆分数据
     train_df, test_df = split(df, 0.5)
     # print('test_df', test_df)
@@ -67,8 +68,8 @@ def applist_pred():
     #                  'camera', 'card_game', 'chat', 'edu', 'game', 'health', 'joy', 'life',
     #                  'news', 'read', 'shop', 'sport', 'tools', 'top_bad_list', 'traffic',
     #                  'video', 'work']
-    # app_cate_list = ['white', 'bad', 'dept', 'dept_on_credit', 'dept_not_on_credit', 'tools']
-    app_cate_list = ['dept', 'tools']
+    app_cate_list = ['white', 'bad', 'dept', 'dept_on_credit', 'dept_not_on_credit', 'tools']
+    # app_cate_list = ['dept', 'tools']
     # df = txt_to_df('../data/libing_join_applist_data.txt', header_list)
     df = txt_to_df('../data/libing_join_applist_data_test.txt', header_list)
     df = drop_nan(df, 'installed_apk')
@@ -94,9 +95,9 @@ def applist_pred():
     # 拼接所有特征
     print('new_tfidf_score_feature_df', len(new_tfidf_score_feature_df))
     print('new_classic_feature_df', len(new_classic_feature_df))
-    test_all_feature_df = all_feature(test_tfidf_score_feature_df, test_classic_feature_df)
+    # test_all_feature_df = all_feature(test_tfidf_score_feature_df, test_classic_feature_df)
     test_all_feature_df = all_feature(test_all_feature_df, test_res_df)
-    new_all_feature_df = all_feature(new_tfidf_score_feature_df, new_classic_feature_df)
+    # new_all_feature_df = all_feature(new_tfidf_score_feature_df, new_classic_feature_df)
     new_all_feature_df = all_feature(new_all_feature_df, new_res_df)
     print('test_all_feature_df', len(test_all_feature_df))
     print('new_all_feature_df len', len(new_all_feature_df))
